@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bank IFSC Code Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1c8adb;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    form {
+      width: 90%;
+      max-width: 500px;
+      background-color: #f2f2f2;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+      background-color: #1c8adb;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Bank IFSC Code Checker</h1>
+  </header>
+
+  <main>
+    <form id="ifsc-form">
+      <label for="ifsc-code">Enter IFSC Code:</label>
+      <input type="text" id="ifsc-code" placeholder="Eg: HDFC0000123">
+      <input type="submit" value="Check">
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('ifsc-form');
+    const ifscCodeInput = document.getElementById('ifsc-code');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const ifscCode = ifscCodeInput.value.trim();
+
+      if (ifscCode === '') {
+        alert('Please enter a valid IFSC code.');
+        return;
+      }
+
+      fetch(`https://ifsc.razorpay.com/${ifscCode}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const result = document.createElement('div');
+          result.setAttribute('id', 'result');
+
+          if (data.hasOwnProperty('error')) {
+            result.innerText = data.error;
+            result.style.color = 'red';
+          } else {
+            result.innerText = `Bank: ${data.BANK}\nBranch: ${data.BRANCH}\nAddress: ${data.ADDRESS}`;
+            result.style.color = 'green';
+          }
+
+          form.appendChild(result);
+        })
+        .catch((error) => console.error(error));
+    });
+  </script>
+</body>
+
+</html>
